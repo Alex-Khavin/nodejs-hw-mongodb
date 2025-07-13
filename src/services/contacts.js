@@ -28,3 +28,24 @@ const contactsSchema = new mongoose.Schema(
 );
 
 export const contact = mongoose.model('Contact', contactsSchema);
+
+export const getAllContacts = () => {
+  return contact.find();
+};
+
+export const getContactById = (contactId) => {
+  return contact.findById(contactId);
+};
+
+export const createContact = (payload) => {
+  return contact.create(payload);
+};
+
+export const updateContact = (contactId, payload) => {
+  return contact.findByIdAndUpdate(contactId, payload, {new: true});
+};
+
+export const deleteContact = (contactId) => {
+  return contact.findOneAndDelete({ _id: contactId });
+};
+
