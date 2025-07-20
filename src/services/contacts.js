@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
+import { SORT_ORDER } from '../constants/index.js';
 
 const contactsSchema = new mongoose.Schema(
   {
@@ -29,8 +31,50 @@ const contactsSchema = new mongoose.Schema(
 
 export const contact = mongoose.model('Contact', contactsSchema);
 
-export const getAllContacts = () => {
-  return contact.find();
+export const getAllContacts = async ({
+  page,
+  perPage,
+  sortOrder = SORT_ORDER,
+  sortBy,
+  filter = {},
+}) => {
+  const limit = perPage;
+  const skip = page > 0 ? (page - 1) * perPage : 0;
+
+  const contactsQuery = contact.find();
+
+  if (filter.name) {
+    contactsQuery.where('name').equals(filter.name);
+  }
+  if (filter.phoneNumber) {
+    contactsQuery.where('phoneNumber').equals(filter.phoneNumber);
+  }
+  if (filter.email) {
+    contactsQuery.where('email').equals(filter.email);
+  }
+  if (filter.isFavourite) {
+    contactsQuery.where('isFavourite').equals(filter.isFavourite);
+  }
+  if (filter.contactType) {
+    contactsQuery.where('contactType').equals(filter.contactType);
+  }
+
+  const contactsCount = await contact
+    .find()
+    .merge(contactsQuery)
+    .countDocuments();
+
+  const contacts = await contactsQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder })
+    .exec();
+  const paginationData = calculatePaginationData(contactsCount, page, perPage);
+
+  return {
+    data: contacts,
+    ...paginationData,
+  };
 };
 
 export const getContactById = (contactId) => {
@@ -42,10 +86,9 @@ export const createContact = (payload) => {
 };
 
 export const updateContact = (contactId, payload) => {
-  return contact.findByIdAndUpdate(contactId, payload, {new: true});
+  return contact.findByIdAndUpdate(contactId, payload, { new: true });
 };
 
 export const deleteContact = (contactId) => {
   return contact.findOneAndDelete({ _id: contactId });
 };
-
