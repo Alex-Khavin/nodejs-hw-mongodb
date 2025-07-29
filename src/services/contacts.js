@@ -25,8 +25,13 @@ const contactsSchema = new mongoose.Schema(
       required: true,
       default: 'personal',
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      // ref: 'users',
+    },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 );
 
 export const contact = mongoose.model('Contact', contactsSchema);
@@ -37,11 +42,12 @@ export const getAllContacts = async ({
   sortOrder = SORT_ORDER,
   sortBy,
   filter = {},
+  userId,
 }) => {
   const limit = perPage;
   const skip = page > 0 ? (page - 1) * perPage : 0;
 
-  const contactsQuery = contact.find();
+  const contactsQuery = contact.find({ userId });
 
   if (filter.name) {
     contactsQuery.where('name').equals(filter.name);
@@ -77,18 +83,18 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = (contactId) => {
-  return contact.findById(contactId);
+export const getContactById = (contactId, userId) => {
+  return contact.findOne({ _id: contactId, userId });
 };
 
 export const createContact = (payload) => {
   return contact.create(payload);
 };
 
-export const updateContact = (contactId, payload) => {
-  return contact.findByIdAndUpdate(contactId, payload, { new: true });
+export const updateContact = (contactId, payload, userId) => {
+  return contact.findByIdAndUpdate(contactId, payload, {userId}, { new: true });
 };
 
-export const deleteContact = (contactId) => {
-  return contact.findOneAndDelete({ _id: contactId });
+export const deleteContact = (contactId, userId) => {
+  return contact.findOneAndDelete({ _id: contactId, userId });
 };

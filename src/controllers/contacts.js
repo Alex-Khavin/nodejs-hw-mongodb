@@ -14,9 +14,15 @@ export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
   const { sortOrder, sortBy } = parseSortParams(req.query);
   const filter = parseFilterParams(req.query);
-  console.log("filter:", filter);
 
-  const contacts = await getAllContacts({ page, perPage, sortBy, sortOrder, filter});
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+    userId: req.user.id,
+  });
 
   res.json({
     status: 200,
@@ -26,7 +32,7 @@ export const getContactsController = async (req, res) => {
 };
 
 export const getContactByIdController = async (req, res) => {
-  const contacts = await getContactById(req.params.contactId);
+  const contacts = await getContactById(req.params.contactId, req.user.id);
 
   if (contacts === null) {
     throw createHttpError(404, 'Contact not found');
@@ -40,7 +46,7 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactsController = async (req, res) => {
-  const newContact = await createContact(req.body);
+  const newContact = await createContact({ ...req.body, userId: req.user.id });
 
   res.status(201).json({
     status: 201,
@@ -50,7 +56,7 @@ export const createContactsController = async (req, res) => {
 };
 
 export const patchContactController = async (req, res, next) => {
-  const patchContact = await updateContact(req.params.contactId, req.body);
+  const patchContact = await updateContact(req.params.contactId, req.body, req.user.id);
 
   if (patchContact === null) {
     next(createHttpError(404, 'Contact not found'));
@@ -67,7 +73,7 @@ export const patchContactController = async (req, res, next) => {
 export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
 
-  const contacts = await deleteContact(contactId);
+  const contacts = await deleteContact(contactId, req.user.id);
   if (!contacts) {
     next(createHttpError(404, 'Contact not found'));
     return;
