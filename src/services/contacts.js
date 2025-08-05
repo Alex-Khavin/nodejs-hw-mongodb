@@ -25,6 +25,9 @@ const contactsSchema = new mongoose.Schema(
       required: true,
       default: 'personal',
     },
+    photo: {
+      type: String,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -94,6 +97,14 @@ export const createContact = (payload) => {
 export const updateContact = (contactId, payload, userId) => {
   return contact.findByIdAndUpdate(contactId, payload, {userId}, { new: true });
 };
+
+// export const updateContact = (contactId, payload, userId) => {
+//   return contact.findOneAndUpdate(
+//     { _id: contactId, userId },
+//     payload,
+//     { new: true }
+//   );
+// };
 
 export const deleteContact = (contactId, userId) => {
   return contact.findOneAndDelete({ _id: contactId, userId });
