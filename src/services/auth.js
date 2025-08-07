@@ -3,7 +3,7 @@ import { randomBytes } from 'crypto';
 import bcrypt from 'bcrypt';
 // import 'dotenv/config';
 import jwt from 'jsonwebtoken';
-import { SMTP } from '../constants/index.js';
+// import { SMTP } from '../constants/index.js';
 import { sendEmail } from '../utils/sendEmail.js';
 import { UsersCollection } from '../db/models/user.js';
 import { SessionsCollection } from '../db/models/session.js';
@@ -86,7 +86,7 @@ export const logoutUser = async (sessionId) => {
   await SessionsCollection.deleteOne({ _id: sessionId });
 };
 
-const { JWT_SECRET, APP_DOMAIN } = process.env;
+const { JWT_SECRET, APP_DOMAIN, SMTP_FROM } = process.env;
 
 export const requestResetToken = async (email) => {
   const user = await UsersCollection.findOne({ email });
@@ -106,7 +106,7 @@ export const requestResetToken = async (email) => {
 
   try {
     await sendEmail({
-      from: SMTP.SMTP_FROM,
+      from: SMTP_FROM,
       to: email,
       subject: 'Reset your password',
       html: `<p>Click <a href="${APP_DOMAIN}/reset-password/token=${resetToken}">here</a> to reset your password!</p>`,
