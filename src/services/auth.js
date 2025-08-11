@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
 import { randomBytes } from 'crypto';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 // import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 // import { SMTP } from '../constants/index.js';
@@ -112,8 +113,11 @@ export const requestResetToken = async (email) => {
       html: `<p>Click <a href="${APP_DOMAIN}/reset-password/token=${resetToken}">here</a> to reset your password!</p>`,
     });
   } catch (error) {
-      console.log(error);
-    throw createHttpError(500, 'Failed to send the email, please try again later.');
+    console.log(error);
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
   }
 };
 
@@ -142,4 +146,25 @@ export const resetPassword = async (token, password) => {
     }
     throw error;
   }
+};
+
+export const loginOrRegister = async (email, name) => {
+  let user = await UsersCollection.findOne({ email });
+
+  if (!user) {
+    const password = await bcrypt.hash(
+      crypto.randomBytes(30).toString('base64'),
+      10,
+    );
+
+    user = await UsersCollection.create({ name, email, password });
+  }
+
+  await SessionsCollection.deleteOne({ userId: user._id });
+
+  const newSession = createSession();
+  return await SessionsCollection.create({
+    userId: user._id,
+    ...newSession,
+  });
 };

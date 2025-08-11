@@ -1,4 +1,5 @@
 // import 'dotenv/config';
+import path from 'node:path';
 
 export const SORT_ORDER = {
   ASC: 'asc',
@@ -14,9 +15,9 @@ const {
   SMTP_USER,
   SMTP_PASSWORD,
   SMTP_FROM,
-//   CLOUD_NAME,
-//   API_KEY,
-//   API_SECRET,
+  //   CLOUD_NAME,
+  //   API_KEY,
+  //   API_SECRET,
 } = process.env;
 
 export const SMTP = {
@@ -32,3 +33,5 @@ export const SMTP = {
 //   API_KEY: 'API_KEY',
 //   API_SECRET: 'API_SECRET',
 // };
+
+export const SWAGGER_PATH = path.join(process.cwd(), 'docs', 'swagger.json');

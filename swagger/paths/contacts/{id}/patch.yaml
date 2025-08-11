@@ -1,0 +1,90 @@
+tags:
+  - Contacts
+summary: Update contact by id
+operationId: updateContact
+description: 'Update contact by id'
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: '65ca67e7ae7f10c88b598384'
+requestBody:
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          name:
+            description: "Contact's name"
+            type: string
+            example: 'John Doe'
+          phoneNumber:
+            description: "Contact's phoneNumber"
+            type: string
+            example: +380778889910
+          email:
+            description: "Contact's email"
+            type: string
+            example: 'jon.doe@mail.com'
+          isFavourite:
+            description: "Contact's is favourite"
+            type: boolean
+            example: 'true'
+            default: 'false'
+          contactType:
+            description: "Contact's type"
+            type: string
+            enum: ['work', 'home', 'personal']
+          # userId:
+          #   description: "Contact's owner id"
+          #   type: string
+          #   example: 99e4decdd286b30065d54af1
+          photo:
+            description: "Link to contact's photo"
+            type: string
+            format: binary
+responses:
+  '200':
+    description: 'Successfully patched a contact!'
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully patched a contact!
+            data:
+              # type: object
+              $ref: ../../../components/schemas/contact.yaml
+  '401':
+    $ref: ../../../components/responses/401.yaml
+  '404':
+    description: Contact not faund
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: Contact not faund
+  '500':
+    $ref: ../../../components/responses/500.yaml
