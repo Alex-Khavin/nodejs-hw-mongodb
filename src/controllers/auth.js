@@ -35,15 +35,6 @@ export const loginUserController = async (req, res) => {
 
   setupSession(res, session);
 
-  //   res.cookie('refreshToken', session.refreshToken, {
-  //     httpOnly: true,
-  //     expires: session.refreshTokenValidUntil,
-  //   });
-  //   res.cookie('sessionId', session._id, {
-  //     httpOnly: true,
-  //     expires: session.accessTokenValidUntil,
-  //   });
-
   res.status(200).json({
     status: 200,
     message: 'Successfully logged in an user!',

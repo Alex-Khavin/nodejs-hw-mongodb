@@ -15,16 +15,6 @@ parameters:
 responses:
   '204':
     description: 'Delete contact by id'
-    content:
-      application/json:
-        schema:
-          type: number
-          required:
-            - status
-          properties:
-            status:
-              type: integer
-              example: 204
   '404':
     description: Contact not faund
     content:

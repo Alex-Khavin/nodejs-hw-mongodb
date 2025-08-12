@@ -95,7 +95,8 @@ export const createContact = (payload) => {
 };
 
 export const updateContact = (contactId, payload, userId) => {
-  return contact.findByIdAndUpdate(contactId, payload, {userId}, { new: true });
+  // return contact.findByIdAndUpdate(contactId, payload, { userId }, { new: true });
+  return contact.findByIdAndUpdate({_id: contactId, userId}, payload, { new: true });
 };
 
 // export const updateContact = (contactId, payload, userId) => {
