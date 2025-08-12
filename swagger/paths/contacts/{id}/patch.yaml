@@ -66,8 +66,9 @@ responses:
               type: string
               example: Successfully patched a contact!
             data:
-              # type: object
-              $ref: ../../../components/schemas/contact.yaml
+              $ref: ../../../components/schemas/contact-patch.yaml
+  '400':
+    $ref: ../../../components/responses/400.yaml
   '401':
     $ref: ../../../components/responses/401.yaml
   '404':
